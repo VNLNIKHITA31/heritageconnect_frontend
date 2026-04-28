@@ -6,6 +6,7 @@ function About() {
   /* Scroll Reveal */
   useEffect(() => {
     const elements = document.querySelectorAll(".reveal-on-scroll");
+
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -13,6 +14,7 @@ function About() {
         }
       });
     });
+
     elements.forEach(el => observer.observe(el));
   }, []);
 
@@ -31,11 +33,11 @@ function About() {
       >
 
         <h1 style={{ marginBottom: "20px" }}>
-          About BharatVerse
+          About Heritage Connect
         </h1>
 
         <p style={{ fontSize: "18px", lineHeight: "1.8" }}>
-          BharatVerse is a premium digital platform dedicated to showcasing,
+          Heritage Connect is a premium digital platform dedicated to showcasing,
           preserving, and celebrating India's rich historical, artistic,
           and cultural heritage.
         </p>
@@ -43,7 +45,7 @@ function About() {
         <p style={{ marginTop: "20px", lineHeight: "1.8" }}>
           From ancient monuments and classical dance traditions to
           traditional paintings, music, and regional cuisines —
-          BharatVerse offers an immersive museum-style digital experience.
+          Heritage Connect offers an immersive museum-style digital experience.
         </p>
 
         <p style={{ marginTop: "20px", lineHeight: "1.8" }}>

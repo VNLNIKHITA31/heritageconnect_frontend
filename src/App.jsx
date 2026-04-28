@@ -11,6 +11,7 @@ import Explore from "./pages/Explore";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 
+
 /* Cultural Pages */
 import VirtualTours from "./pages/VirtualTours";
 import TourDetail from "./pages/TourDetail";
@@ -80,6 +81,8 @@ function App() {
       <Navbar />
 
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* ================= CORE ================= */}
         <Route path="/" element={<Home />} />

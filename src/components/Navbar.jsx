@@ -8,6 +8,7 @@ function Navbar() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+
     const loadUser = () => {
       const email = localStorage.getItem("email");
       const role = localStorage.getItem("role");
@@ -20,12 +21,10 @@ function Navbar() {
     };
 
     loadUser();
-
     window.addEventListener("storage", loadUser);
 
-    return () => {
-      window.removeEventListener("storage", loadUser);
-    };
+    return () => window.removeEventListener("storage", loadUser);
+
   }, []);
 
   const handleLogout = () => {
@@ -34,31 +33,32 @@ function Navbar() {
     navigate("/");
   };
 
-  const role = user?.role;
+  const role = user?.role?.toLowerCase();
 
   return (
     <div className="navbar">
 
-      <h2>BharatVerse</h2>
+      <h2>HeritageConnect</h2>
 
-      <div>
+      <div className="nav-links">
 
         {/* ALWAYS */}
         <Link to="/">Home</Link>
 
-        {/* NOT LOGGED */}
+        {/* NOT LOGGED IN */}
         {!user && (
           <>
             <Link to="/explore">Explore</Link>
             <Link to="/about">About</Link>
             <Link to="/contact">Contact</Link>
+
             <Link to="/login">Login</Link>
             <Link to="/register">Signup</Link>
           </>
         )}
 
         {/* ADMIN */}
-        {user && role === "Admin" && (
+        {user && role?.includes("admin") && (
           <>
             <Link to="/admin">Dashboard</Link>
             <Link to="/admin/users">Users</Link>
@@ -68,18 +68,17 @@ function Navbar() {
         )}
 
         {/* CONTENT CREATOR */}
-        {user && role === "Content Creator" && (
+        {user && role?.includes("creator") && (
           <>
             <Link to="/explore">Explore</Link>
             <Link to="/creator">Dashboard</Link>
-            <Link to="/about">About</Link>
-            <Link to="/contact">Contact</Link>
+            <Link to="/creator-content">Studio</Link>
             <button onClick={handleLogout}>Logout</button>
           </>
         )}
 
         {/* TOUR GUIDE */}
-        {user && role === "Tour Guide" && (
+        {user && role?.includes("guide") && (
           <>
             <Link to="/guide">Dashboard</Link>
             <Link to="/guide-insights">Insights</Link>
@@ -91,7 +90,7 @@ function Navbar() {
         )}
 
         {/* CULTURAL ENTHUSIAST */}
-        {user && role?.toLowerCase().includes("cultural") && (
+        {user && role?.includes("cultural") && (
           <>
             <Link to="/my-journey">My Journey</Link>
             <Link to="/favorites">Favorites</Link>
