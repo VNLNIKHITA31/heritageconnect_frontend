@@ -1,7 +1,19 @@
-import axios from "axios";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
-const API = axios.create({
-  baseURL: "https://fsad-project-backend-production-4e9a.up.railway.app/api"
-});
+export const API = {
+  get: async (endpoint) => {
+    const res = await fetch(`${BASE_URL}${endpoint}`);
+    return res.json();
+  },
 
-export default API;
+  post: async (endpoint, data) => {
+    const res = await fetch(`${BASE_URL}${endpoint}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  }
+};

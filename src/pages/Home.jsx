@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
+// ✅ Import API
+import { API } from "../api/api";
+
 import slide1 from "../assets/images/slide1.jpg";
 import slide2 from "../assets/images/slide2.jpg";
 import slide3 from "../assets/images/slide3.jpg";
@@ -10,7 +13,6 @@ import slide5 from "../assets/images/slide5.jpg";
 import slide6 from "../assets/images/slide6.jpg";
 
 function Home() {
-
   const navigate = useNavigate();
 
   const slides = [
@@ -24,39 +26,95 @@ function Home() {
 
   const [current, setCurrent] = useState(0);
 
-  // slider
+  // ✅ Slider logic
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
+      setCurrent(prev => (prev + 1) % slides.length);
     }, 4000);
-
     return () => clearInterval(interval);
   }, []);
 
-  // reveal animation
+  // ✅ Animation observer
   useEffect(() => {
     const cards = document.querySelectorAll(".card");
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry, index) => {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add("reveal");
-          entry.target.style.transitionDelay = `${index * 0.08}s`;
         }
       });
-    }, { threshold: 0.1 });
+    });
+    cards.forEach(card => observer.observe(card));
+  }, []);
 
-    cards.forEach((card) => observer.observe(card));
-
-    return () => observer.disconnect();
+  // ✅ API CALL (Step 3 added here)
+  useEffect(() => {
+    API.get("/api/user")   // 🔁 change endpoint if needed
+      .then(data => {
+        console.log("Backend response:", data);
+      })
+      .catch(err => {
+        console.error("API error:", err);
+      });
   }, []);
 
   return (
     <div className="page-container">
 
-      {/* ========================= */}
-      {/* TOP SECTION - CARDS FIRST */}
-      {/* ========================= */}
+      <div className="particles">
+        {[...Array(25)].map((_, i) => (
+          <span
+            key={i}
+            style={{
+              left: Math.random() * 100 + "%",
+              animationDuration: 10 + Math.random() * 10 + "s"
+            }}
+          ></span>
+        ))}
+      </div>
+
+      <div
+        style={{
+          position: "relative",
+          marginBottom: "60px",
+          background: "#000",
+          borderRadius: "25px",
+          overflow: "hidden"
+        }}
+      >
+        <img
+          src={slides[current].image}
+          alt="Slide"
+          style={{
+            width: "100%",
+            height: "650px",
+            objectFit: "contain",
+            backgroundColor: "#000"
+          }}
+        />
+
+        <div
+          style={{
+            position: "absolute",
+            bottom: "40px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "rgba(0,0,0,0.65)",
+            padding: "18px 40px",
+            borderRadius: "20px",
+            color: "white",
+            textAlign: "center",
+            backdropFilter: "blur(10px)"
+          }}
+        >
+          <h2 style={{ margin: 0, fontSize: "30px" }}>
+            {slides[current].title}
+          </h2>
+          <p style={{ margin: 0, fontSize: "20px" }}>
+            {slides[current].state}
+          </p>
+        </div>
+      </div>
 
       <div className="hero-glass">
         <h1 style={{ fontSize: "42px", marginBottom: "20px" }}>
@@ -69,7 +127,8 @@ function Home() {
           margin: "0 auto",
           textAlign: "center"
         }}>
-          Discover monuments, heritage, art, dance, music, and traditions of India in a modern immersive experience.
+          Discover monuments, heritage, art, dance, music, and
+          traditions of India in a royal immersive experience.
         </p>
 
         <div style={{ marginTop: "25px" }}>
@@ -90,13 +149,14 @@ function Home() {
         </div>
       </div>
 
-      {/* FEATURE CARDS (NOW AT TOP) */}
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        flexWrap: "wrap",
-        marginTop: "60px"
-      }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexWrap: "wrap",
+          marginTop: "60px"
+        }}
+      >
         {[
           { title: "🏛 Explore", path: "/explore" },
           { title: "🌍 Virtual Tours", path: "/virtualtours" },
@@ -117,49 +177,6 @@ function Home() {
             <p>Explore rich cultural heritage and traditions.</p>
           </div>
         ))}
-      </div>
-
-      {/* ========================= */}
-      {/* BOTTOM SECTION - SLIDER */}
-      {/* ========================= */}
-
-      <div style={{
-        position: "relative",
-        marginTop: "80px",
-        background: "#000",
-        borderRadius: "25px",
-        overflow: "hidden"
-      }}>
-        <img
-          src={slides[current].image}
-          alt="Slide"
-          style={{
-            width: "100%",
-            height: "650px",
-            objectFit: "contain",
-            backgroundColor: "#000"
-          }}
-        />
-
-        <div style={{
-          position: "absolute",
-          bottom: "40px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          background: "rgba(0,0,0,0.65)",
-          padding: "18px 40px",
-          borderRadius: "20px",
-          color: "white",
-          textAlign: "center",
-          backdropFilter: "blur(10px)"
-        }}>
-          <h2 style={{ margin: 0, fontSize: "30px" }}>
-            {slides[current].title}
-          </h2>
-          <p style={{ margin: 0, fontSize: "20px" }}>
-            {slides[current].state}
-          </p>
-        </div>
       </div>
 
     </div>

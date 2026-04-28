@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
+// ✅ IMPORT API
+import { API } from "../api/api";
+
 function Login() {
 
   const navigate = useNavigate();
@@ -27,6 +30,7 @@ function Login() {
     elements.forEach(el => observer.observe(el));
   }, []);
 
+  // ✅ UPDATED LOGIN USING API.JS
   const handleLogin = async () => {
 
     if (!email || !password || !role) {
@@ -36,7 +40,7 @@ function Login() {
 
     try {
 
-      const res = await fetch("http://localhost:8080/api/login", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -78,13 +82,13 @@ function Login() {
 
       const user = JSON.parse(text);
 
-      // ✅ ONLY REQUIRED STORAGE
+      // ✅ STORE USER DATA
       localStorage.setItem("email", user.email);
       localStorage.setItem("role", user.role);
 
       window.dispatchEvent(new Event("storage"));
 
-      // ROLE BASED NAVIGATION
+      // ✅ ROLE BASED NAVIGATION
       if (user.role === "Admin") {
         navigate("/admin");
       } else if (user.role === "Content Creator") {
@@ -101,6 +105,7 @@ function Login() {
     }
   };
 
+  // ✅ RESET PASSWORD UPDATED
   const handleResetPassword = async () => {
 
     if (!email || !newPassword) {
@@ -110,7 +115,7 @@ function Login() {
 
     try {
 
-      const res = await fetch("http://localhost:8080/api/reset-password", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/reset-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

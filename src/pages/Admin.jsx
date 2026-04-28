@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
+// ✅ API import
+import { API } from "../api/api";
+
 function Admin() {
 
   const navigate = useNavigate();
@@ -12,18 +15,31 @@ function Admin() {
     discussions: 0
   });
 
-  // ✅ FETCH FROM BACKEND
+  // ✅ STORE USERS
+  const [users, setUsers] = useState([]);
+
+  // ✅ FETCH STATS (UPDATED - NO LOCALHOST)
   const fetchStats = async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/admin/stats");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats`);
       const data = await res.json();
-
       setStats(data);
     } catch (err) {
       console.error("Error fetching stats:", err);
     }
   };
 
+  // ✅ FETCH USERS (YOUR REQUIRED CODE ADDED)
+  useEffect(() => {
+    API.get("/api/users")
+      .then(res => {
+        console.log("Users:", res);
+        setUsers(res); // optional storage
+      })
+      .catch(err => console.error(err));
+  }, []);
+
+  // ✅ LOAD STATS
   useEffect(() => {
     fetchStats();
   }, []);

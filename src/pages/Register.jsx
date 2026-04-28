@@ -2,9 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
+// ✅ API import
+import { API } from "../api/api";
+
 function Register() {
 
   const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,57 +16,51 @@ function Register() {
 
   useEffect(() => {
     const elements = document.querySelectorAll(".reveal-on-scroll");
+
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) entry.target.classList.add("reveal");
       });
     });
+
     elements.forEach(el => observer.observe(el));
   }, []);
 
+  // ✅ UPDATED REGISTER USING API.JS
   const handleRegister = async () => {
 
-  console.log("BUTTON CLICKED");
+    console.log("BUTTON CLICKED");
 
-  if (!name || !email || !password) {
-    alert("Please fill all fields");
-    return;
-  }
+    if (!name || !email || !password) {
+      alert("Please fill all fields");
+      return;
+    }
 
-  try {
-    console.log("Sending request...");
+    try {
+      console.log("Sending request...");
 
-    const res = await fetch("http://localhost:8080/api/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+      const data = await API.post("/api/register", {
         name,
         email,
         password,
         role
-      })
-    });
+      });
 
-    console.log("Response:", res);
+      console.log("Response Data:", data);
 
-    const data = await res.json();
-    console.log("Data:", data);
+      if (!data || !data.email) {
+        alert("Registration failed");
+        return;
+      }
 
-    if (!data || !data.email) {
-      alert("Registration failed");
-      return;
+      alert("Account created successfully!");
+      navigate("/login");
+
+    } catch (err) {
+      console.log("ERROR:", err);
+      alert("ERROR: " + err.message);
     }
-
-    alert("Account created successfully!");
-    navigate("/login");
-
-  } catch (err) {
-    console.log("ERROR:", err);
-    alert("ERROR: " + err.message);
-  }
-};
+  };
 
   return (
     <div className="page-container">

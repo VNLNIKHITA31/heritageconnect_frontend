@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
 
+// ✅ API import
+import { API } from "../api/api";
+
 function Discussions() {
 
   const [category, setCategory] = useState("Monuments");
   const [site, setSite] = useState("Taj Mahal");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
+
+  // ✅ Backend + fallback state
   const [posts, setPosts] = useState([]);
 
   /* Category Data */
@@ -48,10 +53,20 @@ function Discussions() {
     ]
   };
 
-  /* Load saved discussions */
+  // ✅ LOAD FROM BACKEND
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("discussions")) || [];
-    setPosts(stored);
+    API.get("/api/discussions")
+      .then(res => {
+        console.log("Discussions:", res);
+        setPosts(res);
+      })
+      .catch(err => {
+        console.error("API error:", err);
+
+        // fallback to localStorage
+        const stored = JSON.parse(localStorage.getItem("discussions")) || [];
+        setPosts(stored);
+      });
   }, []);
 
   /* Scroll Reveal */
@@ -72,21 +87,35 @@ function Discussions() {
     setSite(categoryOptions[category][0]);
   }, [category]);
 
-  const addPost = () => {
+  // ✅ ADD POST (BACKEND + FALLBACK)
+  const addPost = async () => {
     if (!title || !message) return;
 
     const newPost = {
-      id: Date.now(),
       category,
       site,
       title,
       message
     };
 
-    const updated = [newPost, ...posts];
+    try {
+      // ✅ send to backend
+      await API.post("/api/discussions", newPost);
 
-    setPosts(updated);
-    localStorage.setItem("discussions", JSON.stringify(updated));
+      // reload from backend
+      const updated = await API.get("/api/discussions");
+      setPosts(updated);
+
+    } catch (err) {
+      console.error("Post error:", err);
+
+      // fallback localStorage
+      const fallbackPost = { ...newPost, id: Date.now() };
+      const updated = [fallbackPost, ...posts];
+
+      setPosts(updated);
+      localStorage.setItem("discussions", JSON.stringify(updated));
+    }
 
     setTitle("");
     setMessage("");
@@ -99,7 +128,7 @@ function Discussions() {
         Cultural Discussions
       </h1>
 
-      {/* Discussion Form */}
+      {/* Form */}
       <div
         className="card"
         style={{
@@ -110,7 +139,6 @@ function Discussions() {
         }}
       >
 
-        {/* Category Dropdown */}
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -130,7 +158,6 @@ function Discussions() {
           ))}
         </select>
 
-        {/* Dynamic Related Field Dropdown */}
         <select
           value={site}
           onChange={(e) => setSite(e.target.value)}
@@ -181,7 +208,7 @@ function Discussions() {
         </button>
       </div>
 
-      {/* Display Posts */}
+      {/* Posts */}
       <div
         style={{
           display: "grid",
@@ -197,8 +224,8 @@ function Discussions() {
           </p>
         )}
 
-        {posts.map(post => (
-          <div key={post.id} className="card">
+        {posts.map((post, index) => (
+          <div key={post.id || index} className="card">
             <h3>{post.title}</h3>
             <p><strong>Category:</strong> {post.category}</p>
             <p><strong>Related To:</strong> {post.site}</p>
