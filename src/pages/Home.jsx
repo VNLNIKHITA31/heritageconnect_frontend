@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 
-// ✅ Import API
 import { API } from "../api/api";
 
 import slide1 from "../assets/images/slide1.jpg";
@@ -26,7 +25,6 @@ function Home() {
 
   const [current, setCurrent] = useState(0);
 
-  // ✅ Slider logic
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent(prev => (prev + 1) % slides.length);
@@ -34,7 +32,6 @@ function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // ✅ Animation observer
   useEffect(() => {
     const cards = document.querySelectorAll(".card");
     const observer = new IntersectionObserver(entries => {
@@ -47,20 +44,16 @@ function Home() {
     cards.forEach(card => observer.observe(card));
   }, []);
 
-  // ✅ API CALL (Step 3 added here)
   useEffect(() => {
-    API.get("/api/users")   // 🔁 change endpoint if needed
-      .then(data => {
-        console.log("Backend response:", data);
-      })
-      .catch(err => {
-        console.error("API error:", err);
-      });
+    API.get("/api/user")
+      .then(data => console.log("Backend response:", data))
+      .catch(err => console.error("API error:", err));
   }, []);
 
   return (
     <div className="page-container">
 
+      {/* PARTICLES (unchanged) */}
       <div className="particles">
         {[...Array(25)].map((_, i) => (
           <span
@@ -73,10 +66,76 @@ function Home() {
         ))}
       </div>
 
+      {/* 🔼 MOVED CARDS TO TOP */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexWrap: "wrap",
+          marginTop: "40px"
+        }}
+      >
+        {[
+          { title: "🏛 Explore", path: "/explore" },
+          { title: "🌍 Virtual Tours", path: "/virtualtours" },
+          { title: "💬 Discussions", path: "/discussions" },
+          { title: "🍛 Food & Culture", path: "/foodculture" },
+          { title: "🎨 Paintings", path: "/paintings" },
+          { title: "💃 Dance Forms", path: "/danceforms" },
+          { title: "🎵 Music", path: "/music" },
+          { title: "🎉 Festivals", path: "/festivals" }
+        ].map((item, index) => (
+          <div
+            key={index}
+            className="card"
+            onClick={() => navigate(item.path)}
+            style={{ cursor: "pointer" }}
+          >
+            <h3>{item.title}</h3>
+            <p>Explore rich cultural heritage and traditions.</p>
+          </div>
+        ))}
+      </div>
+
+      {/* HERO SECTION (unchanged position) */}
+      <div className="hero-glass">
+        <h1 style={{ fontSize: "42px", marginBottom: "20px" }}>
+          Experience Bharat Like Never Before
+        </h1>
+
+        <p style={{
+          fontSize: "18px",
+          maxWidth: "800px",
+          margin: "0 auto",
+          textAlign: "center"
+        }}>
+          Discover monuments, heritage, art, dance, music, and
+          traditions of India in a royal immersive experience.
+        </p>
+
+        <div style={{ marginTop: "25px" }}>
+          <button
+            className="btn-primary"
+            onClick={() => navigate("/explore")}
+            style={{ marginRight: "15px" }}
+          >
+            Explore Monuments
+          </button>
+
+          <button
+            className="btn-primary"
+            onClick={() => navigate("/virtualtours")}
+          >
+            Virtual Tours
+          </button>
+        </div>
+      </div>
+
+      {/* 🔽 MOVED SLIDER TO BOTTOM */}
       <div
         style={{
           position: "relative",
-          marginBottom: "60px",
+          marginTop: "60px",
           background: "#000",
           borderRadius: "25px",
           overflow: "hidden"
@@ -114,69 +173,6 @@ function Home() {
             {slides[current].state}
           </p>
         </div>
-      </div>
-
-      <div className="hero-glass">
-        <h1 style={{ fontSize: "42px", marginBottom: "20px" }}>
-          Experience Bharat Like Never Before
-        </h1>
-
-        <p style={{
-          fontSize: "18px",
-          maxWidth: "800px",
-          margin: "0 auto",
-          textAlign: "center"
-        }}>
-          Discover monuments, heritage, art, dance, music, and
-          traditions of India in a royal immersive experience.
-        </p>
-
-        <div style={{ marginTop: "25px" }}>
-          <button
-            className="btn-primary"
-            onClick={() => navigate("/explore")}
-            style={{ marginRight: "15px" }}
-          >
-            Explore Monuments
-          </button>
-
-          <button
-            className="btn-primary"
-            onClick={() => navigate("/virtualtours")}
-          >
-            Virtual Tours
-          </button>
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          flexWrap: "wrap",
-          marginTop: "60px"
-        }}
-      >
-        {[
-          { title: "🏛 Explore", path: "/explore" },
-          { title: "🌍 Virtual Tours", path: "/virtualtours" },
-          { title: "💬 Discussions", path: "/discussions" },
-          { title: "🍛 Food & Culture", path: "/foodculture" },
-          { title: "🎨 Paintings", path: "/paintings" },
-          { title: "💃 Dance Forms", path: "/danceforms" },
-          { title: "🎵 Music", path: "/music" },
-          { title: "🎉 Festivals", path: "/festivals" }
-        ].map((item, index) => (
-          <div
-            key={index}
-            className="card"
-            onClick={() => navigate(item.path)}
-            style={{ cursor: "pointer" }}
-          >
-            <h3>{item.title}</h3>
-            <p>Explore rich cultural heritage and traditions.</p>
-          </div>
-        ))}
       </div>
 
     </div>
